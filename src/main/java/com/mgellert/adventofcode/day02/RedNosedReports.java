@@ -9,7 +9,7 @@ public class RedNosedReports {
     public long useProblemDampener(List<String> reports) {
         return reports.stream()
                 .map(this::parse)
-                .filter(this::isDampenedSafe)
+                .filter(this::isSafeWithDampening)
                 .count();
     }
 
@@ -20,7 +20,7 @@ public class RedNosedReports {
                 .count();
     }
 
-    private boolean isDampenedSafe(List<Integer> report) {
+    private boolean isSafeWithDampening(List<Integer> report) {
         if (isSafe(report)) return true;
 
         for (int i = 0; i < report.size(); i++) {
@@ -33,25 +33,20 @@ public class RedNosedReports {
     }
 
     private boolean isSafe(List<Integer> report) {
-
-        Direction direction = null;
+        Direction direction = getDirection(report);
 
         for (int i = 0; i < report.size() - 1; i++) {
             var a = report.get(i);
             var b = report.get(i + 1);
             var diff = b - a;
 
-            if (direction == null) {
-                if (diff > 0) direction = Direction.INCREASING;
-                else if (diff < 0) direction = Direction.DECREASING;
-                else return false; // a == b is unsafe
-            } else if (direction == Direction.INCREASING) {
-                if (diff < 0) return false;
-            } else {
-                if (diff > 0) return false;
-            }
-
             if (Math.abs(diff) < 1 || Math.abs(diff) > 3) return false;
+
+            if (direction == Direction.INCREASING && diff < 0) {
+                return false;
+            } else if (direction == Direction.DECREASING && diff > 0) {
+                return false;
+            }
         }
 
         return true;
@@ -59,6 +54,13 @@ public class RedNosedReports {
 
     private List<Integer> parse(String line) {
         return Arrays.stream(line.split(" ")).map(Integer::parseInt).toList();
+    }
+
+    private Direction getDirection(List<Integer> report) {
+        var diff = report.get(1) - report.get(0);
+        if (diff > 0) return Direction.INCREASING;
+        else if (diff < 0) return Direction.DECREASING;
+        return null;
     }
 
     private enum Direction {
