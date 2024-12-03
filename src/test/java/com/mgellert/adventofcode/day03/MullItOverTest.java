@@ -13,7 +13,7 @@ class MullItOverTest {
 
     @Test
     void testSumOfMultiplications() {
-        assertEquals(161, mullItOver.sumOfMultiplications(testInput));
+        assertEquals(161, mullItOver.sumOfMultiplications(testInputPart1));
     }
 
     @Test
@@ -23,7 +23,7 @@ class MullItOverTest {
 
     @Test
     void testSumOfEnabledMultiplications() {
-        assertEquals(48, mullItOver.somOfEnabledMultiplications(testInput2));
+        assertEquals(48, mullItOver.somOfEnabledMultiplications(testInputPart2));
     }
 
     @Test
@@ -32,11 +32,11 @@ class MullItOverTest {
     }
 
 
-    private static final List<String> testInput = List.of(
+    private static final List<String> testInputPart1 = List.of(
             "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))"
     );
 
-    private static final List<String> testInput2 = List.of(
+    private static final List<String> testInputPart2 = List.of(
             "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))"
     );
 

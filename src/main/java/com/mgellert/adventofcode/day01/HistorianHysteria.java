@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class HistorianHysteria {
 
-    private static final Pattern PATTERN = Pattern.compile("(\\d+)\\W+(\\d+)");
+    private final Pattern pattern = Pattern.compile("(\\d+)\\W+(\\d+)");
 
     public Long findTotalDistance(List<String> lines) {
         var lists = parseInput(lines);
@@ -35,7 +35,7 @@ public class HistorianHysteria {
         var list2 = new ArrayList<Long>();
 
         for (String line : lines) {
-            Matcher matcher = PATTERN.matcher(line);
+            Matcher matcher = pattern.matcher(line);
             if (matcher.find()) {
                 list1.add(Long.parseLong(matcher.group(1)));
                 list2.add(Long.parseLong(matcher.group(2)));
