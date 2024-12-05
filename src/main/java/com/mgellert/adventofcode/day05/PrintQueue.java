@@ -11,12 +11,8 @@ import java.util.Set;
 public class PrintQueue {
 
     public long sumOfMiddleOfCorrectUpdates(List<String> lines) {
-        var divider = lines.indexOf("");
-        var rawRules = lines.subList(0, divider);
-        var rawUpdates = lines.subList(divider + 1, lines.size());
-
-        final Map<Long, Rule> rules = parseRules(rawRules);
-        final List<List<Long>> updates = parseUpdates(rawUpdates);
+        final Map<Long, Rule> rules = parseRules(lines);
+        final List<List<Long>> updates = parseUpdates(lines);
 
         return updates.stream()
                 .filter(u -> isCorrect(u, rules))
@@ -25,12 +21,8 @@ public class PrintQueue {
     }
 
     public long sumOfMiddleOfCorrectedUpdates(List<String> lines) {
-        var divider = lines.indexOf("");
-        var rawRules = lines.subList(0, divider);
-        var rawUpdates = lines.subList(divider + 1, lines.size());
-
-        final Map<Long, Rule> rules = parseRules(rawRules);
-        final List<List<Long>> updates = parseUpdates(rawUpdates);
+        final Map<Long, Rule> rules = parseRules(lines);
+        final List<List<Long>> updates = parseUpdates(lines);
 
         return updates.stream()
                 .filter(u -> !isCorrect(u, rules))
@@ -85,7 +77,10 @@ public class PrintQueue {
         }
     }
 
-    private Map<Long, Rule> parseRules(List<String> rawRules) {
+    private Map<Long, Rule> parseRules(List<String> lines) {
+        var divider = lines.indexOf("");
+        var rawRules = lines.subList(0, divider);
+
         Map<Long, Rule> rules = new HashMap<>();
 
         rawRules.forEach(rawRule -> {
@@ -107,7 +102,10 @@ public class PrintQueue {
         return rules;
     }
 
-    private List<List<Long>> parseUpdates(List<String> rawUpdates) {
+    private List<List<Long>> parseUpdates(List<String> lines) {
+        var divider = lines.indexOf("");
+        var rawUpdates = lines.subList(divider + 1, lines.size());
+
         return rawUpdates.stream()
                 .map(line -> Arrays.stream(line.split(",")).map(Long::parseLong).toList())
                 .toList();
