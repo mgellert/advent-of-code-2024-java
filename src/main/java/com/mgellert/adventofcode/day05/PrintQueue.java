@@ -32,23 +32,13 @@ public class PrintQueue {
     }
 
     private List<Long> makeCorrect(List<Long> update, Map<Long, Rule> rules) {
-        var corrected = new LinkedList<Long>();
-
-        for (long num: update) {
-            for (int i = 0; i <= corrected.size(); i++) {
-                var rule = rules.get(num);
-
-                var after = corrected.subList(0, i);
-                var before = corrected.subList(i, corrected.size());
-
-                if (rule.after.containsAll(after) && rule.before.containsAll(before)) {
-                    corrected.add(i, num);
-                    break;
-                }
+        return update.stream().sorted((num, other) -> {
+            if (rules.get(num).before.contains(other)) {
+                return -1;
+            } else {
+                return 1;
             }
-        }
-
-        return corrected;
+        }).toList();
     }
 
     private boolean isCorrect(List<Long> update, Map<Long, Rule> rules) {
