@@ -13,13 +13,23 @@ class PrintQueueTest {
     private final PrintQueue printQueue = new PrintQueue();
 
     @Test
-    public void testSumOfMiddleOfCorrectOrders() {
-        assertEquals(143, printQueue.sumOfMiddleOfCorrectOrders(testInput));
+    public void testSumOfMiddleOfCorrectUpdates() {
+        assertEquals(143, printQueue.sumOfMiddleOfCorrectUpdates(testInput));
     }
 
     @Test
     public void solveDay5Part1() {
-        assertEquals(5588, printQueue.sumOfMiddleOfCorrectOrders(input));
+        assertEquals(5588, printQueue.sumOfMiddleOfCorrectUpdates(input));
+    }
+
+    @Test
+    public void testSumOfMiddleOfCorrectedUpdates() {
+        assertEquals(123, printQueue.sumOfMiddleOfCorrectedUpdates(testInput));
+    }
+
+    @Test
+    public void solveDay5Part2() {
+        assertEquals(5331, printQueue.sumOfMiddleOfCorrectedUpdates(input));
     }
 
     private static final List<String> testInput = Arrays.stream("""
