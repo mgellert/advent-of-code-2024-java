@@ -22,6 +22,16 @@ class GuardGallivantTest {
         assertEquals(4982, guardGallivant.countGuardPositions(input));
     }
 
+    @Test
+    void testCountPossibleObstacles() {
+        assertEquals(6, guardGallivant.countPossibleObstacles(testInput));
+    }
+
+    @Test
+    void solveDay6Part2() {
+        assertEquals(1663, guardGallivant.countPossibleObstacles(input));
+    }
+
     private static final List<String> testInput = Arrays.stream("""
             ....#.....
             .........#
