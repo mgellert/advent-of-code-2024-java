@@ -4,20 +4,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 
 public class BridgeRepair {
 
     public Long sumValidCalibrations(List<String> lines) {
         List<Equation> equations = lines.stream().map(this::parseLines).toList();
 
-        return equations.stream().map(this::isPossible)
+        return equations.stream().map(equation -> isPossible(equation, false))
                 .filter(Objects::nonNull)
                 .mapToLong(r -> r)
                 .sum();
     }
 
-    private Long isPossible(Equation equation) {
+    public Long sumCalibrations(List<String> lines) {
+        List<Equation> equations = lines.stream().map(this::parseLines).toList();
+
+        return equations.stream().map(equation -> isPossible(equation, true))
+                .filter(Objects::nonNull)
+                .mapToLong(r -> r)
+                .sum();
+    }
+
+    private Long isPossible(Equation equation, boolean useExtraOperator) {
         if (equation.operands.size() == equation.operators.size() + 1) {
             if (equation.result == equation.evaluate()) {
                 return equation.result;
@@ -26,16 +34,22 @@ public class BridgeRepair {
             }
         }
 
-        var a = isPossible(equation.addOperator('+'));
-        var b = isPossible(equation.addOperator('*'));
+        if (equation.evaluate() > equation.result) {
+            return null;
+        }
+
+        var a = isPossible(equation.addOperator('+'), useExtraOperator);
+        var b = isPossible(equation.addOperator('*'), useExtraOperator);
+        Long c = null;
+        if (useExtraOperator) {
+            c = isPossible(equation.addOperator('|'), useExtraOperator);
+        }
 
         if (a != null) {
             return a;
         } else if (b != null) {
             return b;
-        } else {
-            return null;
-        }
+        } else return c;
     }
 
     private Equation parseLines(String line) {
@@ -45,17 +59,7 @@ public class BridgeRepair {
         return new Equation(result, operands, new ArrayList<>());
     }
 
-    private static final class Equation {
-        final long result;
-        final List<Long> operands;
-        final List<Character> operators;
-
-        public Equation(long result, List<Long> operands, List<Character> operators) {
-            this.result = result;
-            this.operands = operands;
-            this.operators = operators;
-        }
-
+    private record Equation(long result, List<Long> operands, List<Character> operators) {
         public long evaluate() {
             var result = operands.getFirst();
             for (int i = 0; i < operators.size(); i++) {

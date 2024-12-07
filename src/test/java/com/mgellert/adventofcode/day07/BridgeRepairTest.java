@@ -22,6 +22,16 @@ class BridgeRepairTest {
         assertEquals(5540634308362L, bridgeRepair.sumValidCalibrations(input));
     }
 
+    @Test
+    void testSumCalibrations() {
+        assertEquals(11387, bridgeRepair.sumCalibrations(testInput));
+    }
+
+    @Test
+    void solveDay7part2() {
+        assertEquals(472290821152397L, bridgeRepair.sumCalibrations(input));
+    }
+
     private final List<String> testInput = Arrays.stream("""
             190: 10 19
             3267: 81 40 27
