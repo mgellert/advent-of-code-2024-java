@@ -22,6 +22,16 @@ class ResonantCollinearityTest {
         assertEquals(336, resonantCollinearity.countAntinodesOnMap(input));
     }
 
+    @Test
+    void testCountAntinodesOnMapWithHarmonics() {
+        assertEquals(34, resonantCollinearity.countAntinodesOnMapWithHarmonics(testInput));
+    }
+
+    @Test
+    void solveDay8Part2() {
+        assertEquals(1131, resonantCollinearity.countAntinodesOnMapWithHarmonics(input));
+    }
+
     private final List<String> testInput = Arrays.stream("""
             ............
             ........0...
