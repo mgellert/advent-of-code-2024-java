@@ -1,9 +1,12 @@
 package com.mgellert.adventofcode.day10;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class HoofIt {
@@ -16,15 +19,17 @@ public class HoofIt {
                 .collect(Collectors.toSet());
 
         return trailHeads.stream()
-                .mapToLong(entry -> score(entry.getKey(), map))
+                .map(entry -> score(entry.getKey(), map, new HashSet<>()))
+                .mapToLong(Set::size)
                 .sum();
     }
 
-    private long score(Point point, Map<Point, Integer> map) {
+    private Set<Point> score(Point point, Map<Point, Integer> map, HashSet<Point> reachedTops) {
         int height = map.get(point);
 
         if (height == 9) {
-            return 1;
+            reachedTops.add(point);
+            return reachedTops;
         }
 
         return Arrays.stream(Direction.values())
@@ -32,13 +37,12 @@ public class HoofIt {
                     var p = point.plus(d.delta);
                     var h = map.get(p);
                     return h - height == 1;
-                }).mapToLong(d -> {
+                }).map(d -> {
                     var p = point.plus(d.delta);
-                    var r = score(p, map);
-
-                    return r;
+                    return score(p, map, new HashSet<>());
                 })
-                .sum();
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet());
     }
 
     private Map<Point, Integer> parseMap(List<String> lines) {
