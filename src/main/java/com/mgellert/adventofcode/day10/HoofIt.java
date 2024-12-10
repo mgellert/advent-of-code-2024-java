@@ -45,6 +45,39 @@ public class HoofIt {
                 .collect(Collectors.toSet());
     }
 
+    public long sumOfTrailHeadRates(List<String> lines) {
+        final var map = parseMap(lines);
+
+        var trailHeads = map.entrySet().stream()
+                .filter(entry -> entry.getValue() == 0)
+                .collect(Collectors.toSet());
+
+        return trailHeads.stream()
+                .mapToLong(entry -> rate(entry.getKey(), map))
+                .sum();
+    }
+
+    private long rate(Point point, Map<Point, Integer> map) {
+        int height = map.get(point);
+
+        if (height == 9) {
+            return 1;
+        }
+
+        return Arrays.stream(Direction.values())
+                .filter(d -> {
+                    var p = point.plus(d.delta);
+                    var h = map.get(p);
+                    return h - height == 1;
+                }).mapToLong(d -> {
+                    var p = point.plus(d.delta);
+                    var r = rate(p, map);
+
+                    return r;
+                })
+                .sum();
+    }
+
     private Map<Point, Integer> parseMap(List<String> lines) {
         Map<Point, Integer> map = new HashMap<>();
 

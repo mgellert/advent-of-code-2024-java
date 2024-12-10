@@ -22,6 +22,16 @@ class HoofItTest {
         assertEquals(796, hoofIt.sumOfTrailHeadScores(input));
     }
 
+    @Test
+    void testSumOfTrailHeadRates() {
+        assertEquals(81, hoofIt.sumOfTrailHeadRates(testInput));
+    }
+
+    @Test
+    void solveDay10Part2() {
+        assertEquals(1942, hoofIt.sumOfTrailHeadRates(input));
+    }
+
     private final List<String> testInput = Arrays.stream("""
             89010123
             78121874
