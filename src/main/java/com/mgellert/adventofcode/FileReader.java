@@ -22,6 +22,14 @@ public class FileReader {
         return readLines(day).stream().map(Long::parseLong).toList();
     }
 
+    public static String readLine(String day) {
+        try {
+            return Files.readString(getPath(day));
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read file: " + day);
+        }
+    }
+
     public static boolean exists(String day) {
         return Files.exists(getPath(day));
     }
