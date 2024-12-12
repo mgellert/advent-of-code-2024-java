@@ -22,6 +22,16 @@ class GardenGroupsTest {
         assertEquals(1486324, gardenGroups.fencingPrice(input));
     }
 
+    @Test
+    void testFencingPriceWithDiscount() {
+        assertEquals(1206, gardenGroups.fencingPriceWithDiscount(testInput));
+    }
+
+    @Test
+    void solveDay12Part2() {
+        assertEquals(898684, gardenGroups.fencingPriceWithDiscount(input));
+    }
+
     private final List<String> testInput = Arrays.stream("""
             RRRRIICCFF
             RRRRIICCCF
