@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.mgellert.adventofcode.day13.ClawContraption.CORRECTION;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ClawContraptionTest {
@@ -13,13 +14,18 @@ class ClawContraptionTest {
     private final ClawContraption clawContraption = new ClawContraption();
 
     @Test
-    void testFewestTokensToSpend() {
-        assertEquals(480, clawContraption.fewestTokensToSpend(testInput));
+    void testCalculateMinTokens() {
+        assertEquals(480, clawContraption.minTokensToSpend(testInput));
     }
 
     @Test
     void solveDay13Part1() {
-        assertEquals(40369, clawContraption.fewestTokensToSpend(input));
+        assertEquals(40369, clawContraption.minTokensToSpend(input));
+    }
+
+    @Test
+    void solveDay13Part2() {
+        assertEquals(72587986598368L, clawContraption.minTokensToSpend(input, CORRECTION));
     }
 
     private final List<List<String>> testInput = Arrays.stream("""
