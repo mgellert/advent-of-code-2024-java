@@ -1,7 +1,10 @@
 package com.mgellert.adventofcode.day15;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,21 +33,121 @@ public class WarehouseWoes {
         return gpsScore(boxes);
     }
 
-    private void paint(Thing robot, Set<Thing> walls, Set<Thing> boxes, int size) {
+    public long sumOfWideMap(List<String> lines) {
+        List<String> map = lines.stream()
+                .filter(line -> line.startsWith("#"))
+                .map(WarehouseWoes::doubleLine)
+                .toList();
+
+        String movements = lines.stream()
+                .filter(line -> !line.isEmpty())
+                .filter(line -> MOVEMENTS.contains(line.charAt(0)))
+                .collect(Collectors.joining());
+
+        Thing robot = parseRobot(map);
+        Set<Thing> boxes = parseWideBoxes(map);
+        Set<Thing> walls = parseWalls(map);
+
+//        paint(robot, walls, boxes, map);
+
+        for (char movement : movements.toCharArray()) {
+            var direction = Direction.fromMovement(movement);
+            boolean canMove = canMoveWide(robot, direction, walls, boxes);
+            if (canMove) {
+                moveWide(robot, direction, walls, boxes);
+//                paint(robot, walls, boxes, map);
+            }
+        }
+
+        return gpsScore(boxes);
+    }
+
+    private boolean canMoveWide(Thing thing, Direction direction, Set<Thing> walls, Set<Thing> boxes) {
+        List<Point> newPositions = new ArrayList<>();
+        if (thing.type == Type.ROBOT) {
+            newPositions.add(thing.point.plus(direction.delta));
+        } else {
+            newPositions.add(thing.point.plus(direction.delta));
+            newPositions.add(thing.point.plus(Direction.RIGHT.delta).plus(direction.delta));
+        }
+
+        var wallPositions = walls.stream().map(it -> it.point).collect(Collectors.toSet());
+        Map<Point, Thing> boxPositions = new HashMap<>();
+        for (Thing box : boxes) {
+            if (!box.equals(thing)) {
+                boxPositions.put(box.point, box);
+                boxPositions.put(box.point.plus(Direction.RIGHT.delta), box);
+            }
+        }
+
+        if (wallPositions.stream().noneMatch(newPositions::contains) && boxPositions.keySet().stream().noneMatch(newPositions::contains)) {
+            return true;
+        }
+
+        if (wallPositions.stream().anyMatch(newPositions::contains)) {
+            return false;
+        }
+
+        Set<Thing> connected = new HashSet<>();
+        for (Point p : newPositions) {
+            if (boxPositions.containsKey(p)) {
+                connected.add(boxPositions.get(p));
+            }
+        }
+
+        return connected.stream().allMatch(it -> canMoveWide(it, direction, walls, boxes));
+    }
+
+    private void moveWide(Thing thing, Direction direction, Set<Thing> walls, Set<Thing> boxes) {
+        List<Point> newPositions = new ArrayList<>();
+        if (thing.type == Type.ROBOT) {
+            newPositions.add(thing.point.plus(direction.delta));
+        } else {
+            newPositions.add(thing.point.plus(direction.delta));
+            newPositions.add(thing.point.plus(Direction.RIGHT.delta).plus(direction.delta));
+        }
+
+        Map<Point, Thing> boxPositions = new HashMap<>();
+        for (Thing box : boxes) {
+            if (!box.equals(thing)) {
+                boxPositions.put(box.point, box);
+                boxPositions.put(box.point.plus(Direction.RIGHT.delta), box);
+            }
+        }
+
+        Set<Thing> connected = new HashSet<>();
+        for (Point p : newPositions) {
+            if (boxPositions.containsKey(p)) {
+                connected.add(boxPositions.get(p));
+            }
+        }
+
+        for (Thing t : connected) {
+            moveWide(t, direction, walls, boxes);
+        }
+        thing.point = newPositions.getFirst();
+    }
+
+    private void paint(Thing robot, Set<Thing> walls, Set<Thing> boxes, List<String> map) {
         var wallPositions = walls.stream().map(it -> it.point).collect(Collectors.toSet());
         var boxPositions = boxes.stream().map(it -> it.point).collect(Collectors.toSet());
 
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+        for (int i = 0; i < map.size(); i++) {
+            var box = false;
+            for (int j = 0; j < map.getFirst().length(); j++) {
                 var p = new Point(j, i);
                 if (robot.point.equals(p)) {
-                    System.out.print('@');
+                    System.out.print("@");
                 } else if (wallPositions.contains(p)) {
-                    System.out.print('#');
+                    System.out.print("#");
                 } else if (boxPositions.contains(p)) {
-                    System.out.print('O');
+                    System.out.print("[");
+                    box = true;
+                } else if (box) {
+                    System.out.print("]");
+                    box = false;
                 } else {
-                    System.out.print(' ');
+                    System.out.print(" ");
                 }
             }
             System.out.println();
@@ -54,6 +157,31 @@ public class WarehouseWoes {
 
     private long gpsScore(Set<Thing> boxes) {
         return boxes.stream().map(it -> it.point).mapToLong(it -> 100L * it.y + it.x).sum();
+    }
+
+    private Set<Thing> parseWideBoxes(List<String> map) {
+        Set<Thing> boxes = new HashSet<>();
+        for (int i = 0; i < map.size(); i++) {
+            for (int j = 0; j < map.get(i).length(); j++) {
+                if (map.get(i).charAt(j) == '[') {
+                    boxes.add(new Thing(new Point(j, i), Type.BOX));
+                }
+            }
+        }
+        return boxes;
+    }
+
+    private static String doubleLine(String line) {
+        var doubled = new StringBuilder();
+        for (char c : line.toCharArray()) {
+            switch (c) {
+                case '#' -> doubled.append("##");
+                case '@' -> doubled.append("@.");
+                case 'O' -> doubled.append("[]");
+                default -> doubled.append("..");
+            }
+        }
+        return doubled.toString();
     }
 
     private boolean move(Thing thing, Direction direction, Set<Thing> walls, Set<Thing> boxes) {

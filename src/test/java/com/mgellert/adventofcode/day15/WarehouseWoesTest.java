@@ -22,6 +22,16 @@ class WarehouseWoesTest {
         assertEquals(1448589, warehouseWoes.sumOfCoordinates(input));
     }
 
+    @Test
+    void testSumOfWideMap() {
+        assertEquals(9021, warehouseWoes.sumOfWideMap(testInput));
+    }
+
+    @Test
+    void solveDay15Part2() {
+        assertEquals(1472235, warehouseWoes.sumOfWideMap(input));
+    }
+
     private final List<String> testInput = Arrays.stream("""
             ##########
             #..O..O.O#
